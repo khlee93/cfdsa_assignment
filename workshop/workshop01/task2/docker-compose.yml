@@ -1,0 +1,37 @@
+version: "3.9"
+
+name: workshop01-task2
+
+networks:
+  mynet:
+    name: mynet
+
+volumes:
+  mysql_data:
+
+services:
+  mydb:
+    image: stackupiss/northwind-db:v1
+    container_name: mydb
+    networks:
+      - mynet
+    environment:
+      MYSQL_ROOT_PASSWORD: changeit
+    volumes:
+      - mysql_data:/var/lib/mysql
+    expose:
+      - "3306"
+
+  myapp:
+    image: stackupiss/northwind-app:v1
+    container_name: myapp
+    networks:
+      - mynet
+    depends_on:
+      - mydb
+    environment:
+      DB_HOST: mydb
+      DB_USER: root
+      DB_PASSWORD: changeit
+    ports:
+      - "8080:3000"
